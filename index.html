@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>PS4‑Exploit host</title>
     <h1>PS4‑Exploit host for:</h1>
-    <h2>9.00‑12.52</h2>
+    <h2>5.05‑12.52</h2>
     <h3>hosted by @x6xem</h3>
     <h4>stuff used from, @Karo.ir, @Alazif. </h4>
     <h5> THANKS TO @TheFloW for his amazing work on the PS4 exploits, and to everyone in the scene who contributed to making this possible!</h5>
@@ -73,8 +73,70 @@
                         msg.textContent = 'Mira payload triggered';
                         msg.style.color = 'yellow';
                         // custom code to launch mira or fetch payload can go here
+                    } else if (payload === 'offline') {
+                        msg.textContent = 'Registering offline cache...';
+                        msg.style.color = 'lightblue';
+                        if ('serviceWorker' in navigator) {
+                            navigator.serviceWorker.register('sw.js')
+                                .then(() => {
+                                    msg.textContent = 'Offline cache enabled';
+                                    msg.style.color = 'lightgreen';
+                                })
+                                .catch((err) => {
+                                    msg.textContent = 'Service worker failed: ' + err;
+                                    msg.style.color = 'red';
+                                });
+                        } else {
+                            msg.textContent = 'Service workers not supported';
+                            msg.style.color = 'red';
+                        }
+                    } else if (payload === 'modmenus') {
+                        // check for binloader activation
+                        if (!window.binloaderActivated) {
+                            msg.textContent = 'Binloader not activated – activate first.';
+                            msg.style.color = 'red';
+                        } else {
+                            var panel = document.getElementById('modPanel');
+                            if (panel) {
+                                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+                            }
+                            msg.textContent = panel && panel.style.display === 'block' ? 'Mod menus open' : 'Mod menus hidden';
+                            msg.style.color = 'magenta';
+                            // after opening panel, bind option buttons
+                            attachModOptionHandlers(msg);
+                            // injection logic here; can check for specific game and inject menu
+                            // e.g. if (window.currentGame === 'GAMEID') { /* load menu */ }
+                        }
                     }
                 });
+            }
+
+            // helper to bind mod option buttons once panel exists
+            function attachModOptionHandlers(msg) {
+                var rdr2 = document.getElementById('modOption1');
+                if (rdr2) {
+                    rdr2.addEventListener('click', function() {
+                        msg.textContent = 'Loading RDR2 mod menu...';
+                        msg.style.color = 'aqua';
+                        // replace with actual navigation or injection code 
+                        // e.g. window.location.href = 'rdr2_mod.html';
+                    });
+                }
+                var gta = document.getElementById('modOption2');
+                if (gta) {
+                    gta.addEventListener('click', function() {
+                        msg.textContent = 'Loading GTA V mod menu...';
+                        msg.style.color = 'aqua';
+                        // e.g. window.location.href = 'gtav_mod.html';
+                    });
+                }
+                var cod = document.getElementById('modOption3');
+                if (cod) {
+                    cod.addEventListener('click', function() {
+                        msg.textContent = 'COD menu coming soon';
+                        msg.style.color = 'orange';
+                    });
+                }
             }
         });
     </script>
@@ -82,8 +144,20 @@
 <body>
     <form id="payloadForm">
         <button id="goldhenBtn" name="payload" value="goldhen">GoldHen 9.00</button>
-        <button id="miraBtn" name="payload" value="mira">Mira payload</button>
+        <button id="miraBtn" name="payload" value="mira">Mira payload 5.05</button>
+        <button id="modBtn" name="payload" value="modmenus">Mod menus</button>
+        <button id="offlineBtn" name="payload" value="offline">Enable offline cache</button>
     </form>
     <div id="message"></div>
+
+    <!-- mod menu UI -->
+    <div id="modPanel" style="display:none; padding:1rem; background:#222; color:white;">
+        <h3>Mod Menus</h3>
+        <ul>
+            <li><button id="modOption1">RDR 2</button></li>
+            <li><button id="modOption2">Gta V</button></li>
+            <li><button id="modOption3">COD (soon)</button></li>
+        </ul>
+    </div>
 </body>
 </html>
