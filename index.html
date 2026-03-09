@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>PS4‑Exploit host</title>
+    <h1>PS4‑Exploit host for:</h1>
+    <h2>9.00‑12.52</h2>
+    <h3>hosted by @x6xem</h3>
+    <h4>stuff used from, @Karo.ir, @Alazif. </h4>
+    <h5> THANKS TO @TheFloW for his amazing work on the PS4 exploits, and to everyone in the scene who contributed to making this possible!</h5>
+
+    <!-- page styles -->
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            margin: 0;
+            font-family: sans-serif;
+        }
+        
+        #message {
+            padding: 1rem;
+            font-size: 1.25rem;
+        }
+    </style>
+
+    <!-- include your exploit scripts -->
+    <script src="exploit.js"></script>
+    <script src="int64.js"></script>
+    <script src="rop.js"></script>
+    <script src="kexploit.js"></script>
+
+    <!-- detection logic -->
+    <script>
+        function isPC() {
+            var plat = navigator.platform.toLowerCase();
+            return plat.indexOf('win') !== -1 ||
+                   plat.indexOf('mac') !== -1 ||
+                   plat.indexOf('linux') !== -1;
+        }
+
+        function isPS4() {
+            // PlayStation user agent typically contains "PlayStation" or "PS4"
+            var ua = navigator.userAgent.toLowerCase();
+            return ua.indexOf('playstation') !== -1 || ua.indexOf('ps4') !== -1;
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            var msg = document.getElementById('message');
+            if (!msg) return;
+            if (isPS4()) {
+                msg.textContent = 'Running on PS4 👍';
+                msg.style.color = 'cyan';
+            } else if (isPC()) {
+                msg.textContent = 'Detected PC environment (not allowed)';
+                msg.style.color = 'red';
+            } else {
+                msg.textContent = 'Unknown platform';
+                msg.style.color = 'orange';
+            }
+
+            // use form submission for triggering
+            var form = document.getElementById('payloadForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var payload = e.submitter ? e.submitter.value : null;
+                    if (payload === 'goldhen') {
+                        msg.textContent = 'GoldHen payload triggered';
+                        msg.style.color = 'white';
+                        // actual exploit script already loaded separately
+                    } else if (payload === 'mira') {
+                        msg.textContent = 'Mira payload triggered';
+                        msg.style.color = 'yellow';
+                        // custom code to launch mira or fetch payload can go here
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <form id="payloadForm">
+        <button id="goldhenBtn" name="payload" value="goldhen">GoldHen 9.00</button>
+        <button id="miraBtn" name="payload" value="mira">Mira payload</button>
+    </form>
+    <div id="message"></div>
+</body>
+</html>
